@@ -9,6 +9,16 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx claude-task-viewer --open &"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
