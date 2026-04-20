@@ -111,7 +111,23 @@ EOF
 - 件名: 内容の要約
 ```
 
-**action_items / knowledge_candidates の抽出基準はSlackと同様。**
+**action_items の抽出基準:**
+- 明示的な依頼（「〜してください」「〜をお願いします」）
+- 全員確認が必要なアナウンス（「変更がある方は」「該当者は」）
+- 自分（ktoda@brightcove.com）に関連する可能性のある社内通知
+
+**action_items から除外するメール（重要）:**
+- Confluenceの定期まとめ・リマインダーメール — 件名に "Remember to respond"、"Activity Digest"、"Weekly digest" などを含むもの。個別のコメント通知（`[Confluence] ページ名 > ...`）が別途届くため重複する
+- JiraやGitHubなどのシステム自動生成ダイジェスト・週次サマリーメール
+- 上記に該当する場合は action_items に追加しない（個別通知側で既に捕捉される）
+
+**knowledge_candidates の抽出基準:**
+- 一時的なイベント・雑談・個人的な話題は除外
+- 社内ナレッジ・プロセス・製品情報・ツール情報として長期参照価値があるもの
+
+**knowledge_candidates から除外するメール:**
+- Confluenceのコメント通知（`[Confluence] ...`）— コメントのやり取り自体はナレッジではない。ただしコメント内に具体的な方針変更・仕様決定が含まれる場合は対象とする
+- 定期まとめ・リマインダー系メール全般
 
 ---
 
