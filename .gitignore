@@ -1,12 +1,8 @@
 # Claude project settings (personal overrides)
 .claude/settings.local.json
 
-# Runtime state (ephemeral per-run data)
-state/daily_context.json
-state/run_status.json
-
-# Archive stays local
-state/archive/
+# Runtime state (all ephemeral per-run data)
+state/
 
 # Keep agents, commands, settings tracked
 !.claude/
