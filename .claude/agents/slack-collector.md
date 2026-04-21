@@ -84,6 +84,7 @@ C05UXNU7ELU  #pj_brightcove_bs_生き物ウォッチアプリ
 ```
 
 - `reply_count >= 1` のメッセージは `slack_read_thread` でスレッド取得（返信3件以上または業務上重要なもの優先）
+- **Block Kit メッセージの対応**: `text` フィールドが空またはほぼ空（10文字未満）なのにリアクションがある、または `reply_count >= 1` の場合、`slack_read_thread` を `thread_ts` = そのメッセージの `ts` で呼び出し、ルートメッセージの本文を取得する。それでも本文が空の場合は `slack_search_public_and_private` でチャンネル名 + 送信日時で検索して本文を補完する。それでも取得できない場合のみ「（Block Kit形式・本文取得不可）」と記載する。
 
 ---
 
