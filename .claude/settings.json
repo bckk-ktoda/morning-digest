@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "pkill -f claude-task-viewer 2>/dev/null; sleep 0.3; npx claude-task-viewer --open >/tmp/claude-task-viewer.log 2>&1 &"
+            "command": "[ \"$(uname)\" = \"Darwin\" ] && (pkill -f claude-task-viewer 2>/dev/null; sleep 0.3; npx claude-task-viewer --open >/tmp/claude-task-viewer.log 2>&1 &) || true"
           }
         ]
       }
