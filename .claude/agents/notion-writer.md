@@ -25,11 +25,14 @@ description: state/slack_raw.jsonとgmail_raw.jsonを読み込み、Notion Daily
 
 ## Step 3: Notionページ作成
 
-**タイトル:** metadata.date の値
+**タイトル（厳守）:** `metadata.date` の値そのまま（例: `2026-05-12`）
+- ⚠️ `YYYY-MM-DD` 形式の文字列**のみ**。曜日・絵文字・「Daily Digest」「朝のサマリー」などの接頭辞・接尾辞は一切付けない
+- タイトルを揺らさないこと。過去ページのタイトル形式が異なっていても、新規ページは必ず `YYYY-MM-DD` だけにする
+
 **アイコン:** 📋
 **親ページ:** `325fbe2a-3484-81df-b7d7-d543fed67f45`
 
-**ページ構成:**
+**ページ構成（厳守: この2セクションのみ）:**
 ```
 親ページリンク + 対象期間（metadata.period）
 
@@ -37,6 +40,13 @@ description: state/slack_raw.jsonとgmail_raw.jsonを読み込み、Notion Daily
 
 {gmail_raw["notion_sections"]}
 ```
+
+⚠️ **このページにはサマリーのみを書く。以下は絶対に書き出さない:**
+- `action_items` の一覧（→ Task Board で task-extractor が処理する）
+- `knowledge_candidates` の一覧（→ Knowledge Stock で knowledge-curator が処理する）
+- 「本日のアクションアイテム」「ナレッジ候補」「TODO」などの独自セクション
+
+Daily Digest はあくまで Slack/Gmail のサマリーであり、タスク管理・ナレッジ管理を兼ねない。
 
 ---
 
