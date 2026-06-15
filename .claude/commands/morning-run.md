@@ -12,6 +12,18 @@ description: 朝の自動化パイプラインを一括実行する（Digest作�
 
 ### Phase 1: 並列収集
 
+前回実行の中間成果物が残っていると下流が古いデータで動くため、まず state/ の当日生成物をクリアする:
+
+```bash
+python3 -c "
+import pathlib
+for f in ['daily_context.json','slack_raw.json','gmail_raw.json']:
+    p = pathlib.Path('state')/f
+    if p.exists(): p.unlink()
+print('stale state cleared')
+"
+```
+
 claude-task-viewerにタスクを登録する:
 
 ```bash
@@ -40,28 +52,45 @@ print('tasks initialized')
 
 ### Phase 2: daily_context.json を合成
 
-両エージェントが完了し `state/slack_raw.json` と `state/gmail_raw.json` が揃ったことを確認してから、以下のBashコマンドで合成する:
+両エージェントの完了後、以下のBashコマンドで合成する。**片方の raw ファイルが欠損・破損していてもクラッシュせず、取得できた分だけで合成する**（防御的に読む）:
 
 ```bash
 python3 << 'EOF'
 import json, pathlib
 
-slack = json.loads(pathlib.Path('state/slack_raw.json').read_text())
-gmail = json.loads(pathlib.Path('state/gmail_raw.json').read_text())
+def load(name):
+    p = pathlib.Path('state') / name
+    if not p.exists():
+        return None
+    try:
+        return json.loads(p.read_text())
+    except Exception:
+        return None  # 破損ファイルは無視
 
+slack = load('slack_raw.json')
+gmail = load('gmail_raw.json')
+
+if slack is None and gmail is None:
+    print("ERROR: slack_raw.json も gmail_raw.json も読めません。daily_context.json は作成しません。")
+    raise SystemExit(1)
+
+base = slack or gmail  # metadata はどちらか取得できた方から
 context = {
-  "metadata": slack["metadata"],
-  "notion_digest_page_id": None,
-  "action_items": slack["action_items"] + gmail["action_items"],
-  "knowledge_candidates": slack["knowledge_candidates"] + gmail["knowledge_candidates"]
+  "metadata": base.get("metadata", {}),
+  "action_items": (slack or {}).get("action_items", []) + (gmail or {}).get("action_items", []),
+  "knowledge_candidates": (slack or {}).get("knowledge_candidates", []) + (gmail or {}).get("knowledge_candidates", []),
+  "sources_present": {"slack": slack is not None, "gmail": gmail is not None},
 }
 
 pathlib.Path('state/daily_context.json').write_text(
   json.dumps(context, ensure_ascii=False, indent=2)
 )
-print(f"daily_context.json created: {len(context['action_items'])} action_items, {len(context['knowledge_candidates'])} knowledge_candidates")
+print(f"daily_context.json created: {len(context['action_items'])} action_items, "
+      f"{len(context['knowledge_candidates'])} knowledge_candidates, sources={context['sources_present']}")
 EOF
 ```
+
+⚠️ `sources_present` に `false` がある場合は、下流が「収集失敗」を判別できるよう Phase 4 のレポートにも明記する。
 
 claude-task-viewerを更新する:
 
