@@ -18,9 +18,50 @@
       "mcp__claude_ai_Gmail__get_thread",
       "mcp__claude_ai_Google_Calendar__list_events",
       "mcp__claude_ai_Google_Calendar__list_calendars"
+    ],
+    "deny": [
+      "mcp__claude_ai_Slack__slack_send_message",
+      "mcp__claude_ai_Slack__slack_send_message_draft",
+      "mcp__claude_ai_Slack__slack_schedule_message",
+      "mcp__claude_ai_Slack__slack_add_reaction",
+      "mcp__claude_ai_Slack__slack_create_canvas",
+      "mcp__claude_ai_Slack__slack_update_canvas",
+      "mcp__claude_ai_Gmail__create_draft",
+      "mcp__claude_ai_Gmail__update_draft",
+      "mcp__claude_ai_Gmail__create_label",
+      "mcp__claude_ai_Gmail__delete_label",
+      "mcp__claude_ai_Gmail__update_label",
+      "mcp__claude_ai_Gmail__label_message",
+      "mcp__claude_ai_Gmail__label_thread",
+      "mcp__claude_ai_Gmail__unlabel_message",
+      "mcp__claude_ai_Gmail__unlabel_thread",
+      "mcp__claude_ai_Gmail__apply_sensitive_message_label",
+      "mcp__claude_ai_Gmail__apply_sensitive_thread_label",
+      "mcp__claude_ai_Notion__notion-update-data-source",
+      "Bash(sudo *)",
+      "Bash(rm *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(nc *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(chmod *)",
+      "Bash(npx *)",
+      "Bash(npm *)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git merge*)"
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          { "type": "command", "command": "bash hooks/guard.sh" }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
